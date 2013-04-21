@@ -1,3 +1,0 @@
-mov a 42
-mov a 0
-int 2
