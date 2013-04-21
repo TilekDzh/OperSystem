@@ -1,10 +1,9 @@
-#include "Memory.h"
-
+#include "memory.h"
 
 namespace vm
 {
-	Memory::Memory():ram(RAM_SIZE){}
+    Memory::Memory()
+        : ram(DEFAULT_RAM_SIZE) {}
 
-
-	Memory::~Memory(){}
+    Memory::~Memory() {}
 }

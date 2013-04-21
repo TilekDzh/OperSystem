@@ -1,20 +1,29 @@
-#include "Machine.h"
+#include "machine.h"
 
 namespace vm
 {
-	Machine::Machine(void):memory(),pic(),cpu(memory,pic){}
+    Machine::Machine()
+        : memory(), pic(), pit(pic), cpu(memory, pic),
+         _working(false) {}
 
-	Machine::~Machine(void)
-	{
-	}
+    Machine::~Machine() {}
 
-	void Machine::Start()
-	{
-		for(;;){
-			cpu.Step();
+    void Machine::Start()
+    {
+        if (!_working) {
+            _working = true;
 
-			//Generate the Timer Interrupt
-			pic.irq_0();
-		}
-	}
+            while (_working) {
+                pit.Tick();
+                cpu.Step();
+            }
+        }
+    }
+
+    void Machine::Stop()
+    {
+        if (_working) {
+            _working = false;
+        }
+    }
 }

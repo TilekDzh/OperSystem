@@ -1,46 +1,39 @@
 #include "cpu.h"
+
+#include <iostream>
+
 namespace vm
 {
-	Registers::Registers():eax(0),ebx(0),ecx(0),edx(0),flags(0),ip(0),sp(0){}
+    Registers::Registers()
+        : eax(0), ebx(0), ecx(0), flags(0), ip(0), sp(0) {}
 
-	CPU::CPU(Memory &memory,Pic &pic):memory(memory),pic(pic){}
+    CPU::CPU(Memory &memory, PIC &pic): registers(), _memory(memory), _pic(pic) {}
 
-	CPU::~CPU(){}
+    CPU::~CPU() {}
 
-	void CPU::Step()
-	{
-		int instruction = memory.ram[registers.ip];
-		int data = memory.ram[registers.ip];
+    void CPU::Step()
+    {
+        int ip = registers.ip;
 
-		if(instruction == MOV_EAX_OPCODE)
-		{
-			registers.eax = data;
-			registers.ip += 2;
-		}
-		else if(instruction == MOV_EBX_OPCODE)
-		{
-			registers.ebx = data;
-			registers.ip += 2;
-		}
-		else if(instruction == MOV_ECX_OPCODE)
-		{
-			registers.ecx = data;
-			registers.ip += 2;
-		}
-		else if(instruction == MOV_EDX_OPCODE)
-		{
-			registers.edx = data;
-			registers.ip += 2;
-		}
-		else if(instruction == INT)
-		{
-			pic.isr_1();
+        int instruction = _memory.ram[ip];
+        int data = _memory.ram[ip + 1];
 
-			registers.ip += 2;
-		}
-		else if(instruction == JUMP)
-		{
-			registers.ip += data;
-		}
-	}
+        if (instruction == CPU::MOVA_BASE_OPCODE) {
+            registers.eax = data;
+            registers.ip += 2;
+        } else if (instruction == CPU::MOVB_BASE_OPCODE) {
+            registers.ebx = data;
+            registers.ip += 2;
+        } else if (instruction == CPU::MOVC_BASE_OPCODE) {
+            registers.ecx = data;
+            registers.ip += 2;
+        } else if (instruction == CPU::JMP_BASE_OPCODE) {
+            registers.ip += data;
+        } else if (instruction == CPU::INT_BASE_OPCODE) {
+            _pic.isr_3();
+        } else {
+            std::cerr << "CPU: invalid opcode data. Skipping..." << std::endl;
+            registers.ip += 2;
+        }
+    }
 }

@@ -1,41 +1,44 @@
 #pragma once
-#include "Pic.h"
-#include "Memory.h"
+
+#include "memory.h"
+#include "pic.h"
 
 namespace vm
 {
-	struct Registers
-	{
-		int eax,ebx,ecx,edx;
+    struct Registers
+    {
+        int eax;
+        int ebx;
+        int ecx;
 
-		unsigned int flags;
+        int flags;
 
-		unsigned int ip;
-		unsigned sp;
+        unsigned int ip;
+        unsigned int sp;
 
-		Registers();
-	};
+        Registers();
+    };
 
-	class CPU
-	{
-		const static int MOV_EAX_OPCODE = 0x10;
-		const static int MOV_EBX_OPCODE = 0x11;
-		const static int MOV_ECX_OPCODE = 0x12;
-		const static int MOV_EDX_OPCODE = 0x13;
+    class CPU
+    {
+    public:
+        static const int MOVA_BASE_OPCODE = 0x10;
+        static const int MOVB_BASE_OPCODE = 0x10 + 1;
+        static const int MOVC_BASE_OPCODE = 0x10 + 2;
 
-		const static int INT = 0x20;
-		const static int JUMP = 0x21;
+        static const int JMP_BASE_OPCODE = 0x20;
 
-		public:
-			Registers registers;
-			CPU(Memory &memory,Pic &pic);
-			virtual ~CPU();
+        static const int INT_BASE_OPCODE = 0x30;
 
-			void Step();
+        Registers registers;
 
-		private:
-			Memory &memory;
-			Pic &pic;
-	};
+        CPU(Memory &memory, PIC &pic);
+        virtual ~CPU();
+
+        void Step();
+
+    private:
+        Memory &_memory;
+        PIC &_pic;
+    };
 }
-

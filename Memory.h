@@ -1,20 +1,23 @@
-#pragma once
+#ifndef MEMORY_H
+#define MEMORY_H
+
 #include <vector>
 
 namespace vm
 {
-	class Memory
-	{
-	public:
+    class Memory
+    {
+    public:
+        typedef std::vector<int> ram_type;
+        typedef ram_type::size_type ram_size_type;
 
-		typedef std::vector<int> ram_type;
-		typedef ram_type::size_type ram_size_type;
-		static const std::vector<int>::size_type RAM_SIZE = 0x10000;
-		std::vector<int> ram;
+        static const ram_size_type DEFAULT_RAM_SIZE = 0xFFFF;
 
-		Memory();
-		virtual ~Memory();
+        ram_type ram;
 
-	};
+        Memory();
+        virtual ~Memory();
+    };
 }
 
+#endif

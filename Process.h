@@ -1,29 +1,42 @@
-#pragma once
+#ifndef PROCESS_H
+#define PROCESS_H
+
 #include "cpu.h"
+#include "memory.h"
 
 namespace vm
 {
-	class Process
-	{
-	public:
-		typedef short process_id;
-		typedef std::vector<int>::size_type memory_position;
-		typedef short stateProcess;
+    class Process
+    {
+    public:
+        enum States
+        {
+            Running, Ready, Blocked
+        };
 
-		// state == 1 -> Ready
-		// state == 0 -> Running
-		// state == -1 -> Blocked
-		stateProcess state;
-		memory_position lastPosition;
-		memory_position currPosition;
+        typedef unsigned int process_id_type;
+        typedef unsigned short process_priority_type;
 
-		Registers registers;
+        process_id_type id;
 
-		Process(process_id id,std::vector<int>::size_type lastPosition,std::vector<int>::size_type currentPosition, stateProcess state);
-		~Process();
-	private:
-		process_id ID;
+        Registers registers;
 
-	};
+        States state;
+
+        process_priority_type priority;
+
+        Memory::ram_size_type memory_start_position;
+        Memory::ram_size_type memory_end_position;
+
+        Memory::ram_size_type sequential_instruction_count;
+
+        Process(process_id_type id, Memory::ram_size_type memory_start_position,
+                                    Memory::ram_size_type memory_end_position);
+
+        virtual ~Process();
+
+        bool operator<(const Process &anotherProcess) const;
+    };
 }
 
+#endif

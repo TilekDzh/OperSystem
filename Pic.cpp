@@ -1,15 +1,14 @@
-#include "Pic.h"
+#include "pic.h"
 
 namespace vm
 {
-	Pic::Pic():irq_0([]() {}),
-			 irq_1([]() {}),
-			 irq_2([]() {}),
+    PIC::PIC()
+        : isr_0([]() {}),
+          isr_1([]() {}),
+          isr_2([]() {}),
+          isr_3([]() {}),
+          isr_4([]() {}),
+          isr_5([]() {}) {}
 
-			 isr_0([]() {}),
-			 isr_1([]() {}),
-			 isr_2([]() {}){}
-
-
-	Pic::~Pic(){}
+    PIC::~PIC() {}
 }
