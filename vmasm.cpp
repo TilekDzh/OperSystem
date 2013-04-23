@@ -10,9 +10,21 @@ static const char *MOV_OPCODE_TOKEN = "mov";
 static const char *REGISTER_A_TOKEN = "eax";
 static const char *REGISTER_B_TOKEN = "ebx";
 static const char *REGISTER_C_TOKEN = "ecx";
+static const char *LOAD = "ld";
+static const char *STORE = "store";
+
 static const int MOVA_BASE_OPCODE = 0x10;
 static const int MOVB_BASE_OPCODE = MOVA_BASE_OPCODE + 1;
 static const int MOVC_BASE_OPCODE = MOVA_BASE_OPCODE + 2;
+
+static const int LOADA_BASE_OPCODE = 0x30;
+static const int LOADB_BASE_OPCODE = LOADA_BASE_OPCODE + 1;
+static const int LOADC_BASE_OPCODE = LOADA_BASE_OPCODE + 2;
+
+static const int STOREA_BASE_OPCODE = 0x40;
+static const int STOREB_BASE_OPCODE = STOREA_BASE_OPCODE + 1;
+static const int STOREC_BASE_OPCODE = STOREA_BASE_OPCODE + 2;
+
 
 static const char *JMP_OPCODE_TOKEN = "jmp";
 static const int JMP_BASE_OPCODE = 0x20;
@@ -81,7 +93,68 @@ int main(int argc, char *argv[])
 
                         return -1;
                     }
-                } else if (token == JMP_OPCODE_TOKEN) {
+                } else if(token == LOAD) {
+					int instruction, data;
+                    if (tokens >> token) {
+                        std::transform(token.begin(), token.end(), token.begin(), tolower);
+
+                        if (token == REGISTER_A_TOKEN) {
+                            instruction = LOADA_BASE_OPCODE;
+                        } else if (token == REGISTER_B_TOKEN) {
+                            instruction = LOADB_BASE_OPCODE;
+                        } else if (token == REGISTER_C_TOKEN) {
+                            instruction = LOADC_BASE_OPCODE;
+                        } else {
+                            std::cerr << "Invalid register specifier." << std::endl;
+
+                            return -1;
+                        }
+
+                        if (!(tokens >> data)) {
+                            std::cerr << "Invalid immediate value." << std::endl;
+
+                            return -1;
+                        }
+
+                        ops.push_back(instruction);
+                        ops.push_back(data);
+                    } else {
+                        std::cerr << "Invalid assembly statement." << std::endl;
+
+                        return -1;
+                    }
+				} else if (token == STORE) {
+					int instruction, data;
+                    if (tokens >> token) {
+                        std::transform(token.begin(), token.end(), token.begin(), tolower);
+
+                        if (token == REGISTER_A_TOKEN) {
+                            instruction = STOREA_BASE_OPCODE;
+                        } else if (token == REGISTER_B_TOKEN) {
+                            instruction = STOREB_BASE_OPCODE;
+                        } else if (token == REGISTER_C_TOKEN) {
+                            instruction = STOREC_BASE_OPCODE;
+                        } else {
+                            std::cerr << "Invalid register specifier." << std::endl;
+
+                            return -1;
+                        }
+
+                        if (!(tokens >> data)) {
+                            std::cerr << "Invalid immediate value." << std::endl;
+
+                            return -1;
+                        }
+
+                        ops.push_back(instruction);
+                        ops.push_back(data);
+                    } else {
+                        std::cerr << "Invalid assembly statement." << std::endl;
+
+                        return -1;
+                    }
+				}
+				else if (token == JMP_OPCODE_TOKEN) {
                     int instruction = JMP_BASE_OPCODE;
 
                     int data;

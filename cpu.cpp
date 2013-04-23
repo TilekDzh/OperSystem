@@ -29,7 +29,10 @@ namespace vm
             registers.ip += 2;
         } else if (instruction == CPU::JMP_BASE_OPCODE) {
             registers.ip += data;
-        } else if (instruction == CPU::INT_BASE_OPCODE) {
+        } else if (instruction == CPU::LOADA_BASE_OPCODE) {
+			
+		} else if(instruction == CPU::LOADA_BASE_OPCODE
+		else if (instruction == CPU::INT_BASE_OPCODE) {
             _pic.isr_3();
         } else {
             std::cerr << "CPU: invalid opcode data. Skipping..." << std::endl;

@@ -25,6 +25,14 @@ namespace vm
         static const int MOVA_BASE_OPCODE = 0x10;
         static const int MOVB_BASE_OPCODE = 0x10 + 1;
         static const int MOVC_BASE_OPCODE = 0x10 + 2;
+		
+		static const int LOADA_BASE_OPCODE = 0x30;
+		static const int LOADB_BASE_OPCODE = LOADA_BASE_OPCODE + 1;
+		static const int LOADC_BASE_OPCODE = LOADA_BASE_OPCODE + 2;
+		
+		static const int STOREA_BASE_OPCODE = 0x40;
+		static const int STOREB_BASE_OPCODE = STOREA_BASE_OPCODE + 1;
+		static const int STOREC_BASE_OPCODE = STOREA_BASE_OPCODE + 2;
 
         static const int JMP_BASE_OPCODE = 0x20;
 
