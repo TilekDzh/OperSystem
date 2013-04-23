@@ -201,8 +201,32 @@ namespace vm
 
 	Memory::ram_size_type Kernel::AllocatePhysicalMemory(Memory::ram_size_type units)
 	{
-		//To Do videlit pamat' 
-		//vozvrawaet index kuda zapisivaet dannie
+		Memory::ram_size_type previous_free_index = _free_pshysical_memory;
+		Memory::ram_size_type current_index;
+
+		for(current_index = machine.memory.ram[previous_free_index];;previous_free_index = current_index,current_index = machine.memory.ram[current_index])
+		{
+			if(machine.memory.ram[current_index+1] >= units)
+			{
+				if(machine.memory.ram[current_index + 1] == units)
+				{
+					machine.memory.ram[previous_free_index] = machine.memory.ram[current_index];
+				}
+				else
+				{
+					machine.memory.ram[current_index + 1] -= units;
+					current_index += machine.memory.ram[current_index + 1];
+					machine.memory.ram[current_index + 1] = units;
+				}
+				_free_pshysical_memory = previous_free_index;
+				return current_index;
+			}
+
+			if(current_index = _free_pshysical_memory)
+			{
+				return -1;
+			}
+		}
 	}
 
 	void Kernel::FreephycialMemory(Memory::ram_size_type physical_memory_index)
@@ -241,9 +265,6 @@ namespace vm
 		}
 
 		_free_pshysical_memory = previous_free_block_index;
-		//  machine.memory.ram[current_block_index + 1]
-		// previ or next and after it to merge
-		//previous_free_block_index
 
 	}
 }
