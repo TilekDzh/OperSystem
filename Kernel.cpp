@@ -222,7 +222,7 @@ namespace vm
 				return current_index;
 			}
 
-			if(current_index = _free_pshysical_memory)
+			if(current_index == _free_pshysical_memory)
 			{
 				return -1;
 			}
