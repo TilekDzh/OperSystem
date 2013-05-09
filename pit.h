@@ -10,7 +10,7 @@ namespace vm
     public:
         typedef unsigned int frequency_type;
 
-        static const frequency_type DEFAULT_FREQUENCY = 5;
+        static const frequency_type DEFAULT_FREQUENCY = 1;
 
         frequency_type frequency;
 

@@ -5,9 +5,9 @@
 namespace vm
 {
     Registers::Registers()
-        : eax(0), ebx(0), ecx(0), flags(0), ip(0), sp(0) {}
+        : a(0), b(0), c(0), flags(0), ip(0), sp(0) {}
 
-    CPU::CPU(Memory &memory, PIC &pic): registers(), _memory(memory), _pic(pic) {}
+    CPU::CPU(MMU &mmu, PIC &pic): registers(), _mmu(mmu), _pic(pic) {}
 
     CPU::~CPU() {}
 
@@ -15,28 +15,149 @@ namespace vm
     {
         int ip = registers.ip;
 
-        int instruction = _memory.ram[ip];
-        int data = _memory.ram[ip + 1];
+        int instruction = _mmu.ram[ip];
+        int data = _mmu.ram[ip + 1];
 
-        if (instruction == CPU::MOVA_BASE_OPCODE) {
-            registers.eax = data;
+        switch (instruction) {
+        case CPU::MOVA_BASE_OPCODE:
+            registers.a = data;
             registers.ip += 2;
-        } else if (instruction == CPU::MOVB_BASE_OPCODE) {
-            registers.ebx = data;
+
+            break;
+        case CPU::MOVB_BASE_OPCODE:
+            registers.b = data;
             registers.ip += 2;
-        } else if (instruction == CPU::MOVC_BASE_OPCODE) {
-            registers.ecx = data;
+
+            break;
+        case CPU::MOVC_BASE_OPCODE:
+            registers.c = data;
             registers.ip += 2;
-        } else if (instruction == CPU::JMP_BASE_OPCODE) {
+
+            break;
+		
+
+		case CPU::LDA_BASE_OPCODE:
+			_mmu.page_index_offset = _mmu.GetPageIndexAndOffsetForVirtualAddress(data);
+			MMU::page_entry_type page = _mmu.page_table->at(_mmu.page_index_offset.first);
+
+			if(page == MMU::INVALID_PAGE)
+			{
+				int temp = registers.a;
+				registers.a = _mmu.page_index_offset.first;
+				_pic.isr_4();
+				registers.a = temp;
+			}
+			else
+			{
+				registers.a = _mmu.ram[page+_mmu.page_index_offset.second];
+				registers.ip += 2;
+			}
+
+			break;
+		case CPU::LDB_BASE_OPCODE:
+			_mmu.page_index_offset = _mmu.GetPageIndexAndOffsetForVirtualAddress(data);
+			MMU::page_entry_type page = _mmu.page_table->at(_mmu.page_index_offset.first);
+
+			if(page == MMU::INVALID_PAGE)
+			{
+				int temp = registers.a;
+				registers.a = _mmu.page_index_offset.first;
+				_pic.isr_4();
+				registers.a = temp;
+			}
+			else
+			{
+				registers.b = _mmu.ram[page+_mmu.page_index_offset.second];
+				registers.ip += 2;
+			}
+
+			break;
+
+		case  CPU::LDC_BASE_OPCODE:
+			_mmu.page_index_offset = _mmu.GetPageIndexAndOffsetForVirtualAddress(data);
+			MMU::page_entry_type page =_mmu.page_table->at(_mmu.page_index_offset.first);
+
+			if(page == MMU::INVALID_PAGE)
+			{
+				int temp = registers.a;
+				registers.a = _mmu.page_index_offset.first;
+				_pic.isr_4();
+				registers.a = temp;
+			}
+			else
+			{
+				registers.c = _mmu.ram[page+_mmu.page_index_offset.second];
+				registers.ip += 2;
+			}
+
+			break;
+
+		case CPU::STA_BASE_OPCODE:
+			_mmu.page_index_offset = _mmu.GetPageIndexAndOffsetForVirtualAddress(data);
+			MMU::page_entry_type page = _mmu.page_table->at(_mmu.page_index_offset.first);
+
+			if(page == MMU::INVALID_PAGE)
+			{
+				int temp = registers.a;
+				registers.a = _mmu.page_index_offset.first;
+				_pic.isr_4();
+				registers.a = temp;
+			}
+			else
+			{
+				_mmu.ram[page+_mmu.page_index_offset.second] = registers.a;
+				registers.ip += 2;
+			}
+
+			break;
+		
+		case CPU::STB_BASE_OPCODE:
+			_mmu.page_index_offset = _mmu.GetPageIndexAndOffsetForVirtualAddress(data);
+			MMU::page_entry_type page = _mmu.page_table->at(_mmu.page_index_offset.first);
+
+			if(page == MMU::INVALID_PAGE)
+			{
+				int temp = registers.a;
+				registers.a = _mmu.page_index_offset.first;
+				_pic.isr_4();
+				registers.a = temp;
+			}
+			else
+			{
+				_mmu.ram[page+_mmu.page_index_offset.second] = registers.b;
+				registers.ip += 2;
+			}
+			break;
+		case CPU::STC_BASE_OPCODE:
+			_mmu.page_index_offset = _mmu.GetPageIndexAndOffsetForVirtualAddress(data);
+			MMU::page_entry_type page = _mmu.page_table->at(_mmu.page_index_offset.first);
+
+			if(page == MMU::INVALID_PAGE)
+			{
+				int temp = registers.a;
+				registers.a = _mmu.page_index_offset.first;
+				_pic.isr_4();
+				registers.a = temp;
+			}
+			else
+			{
+				_mmu.ram[page+_mmu.page_index_offset.second] = registers.c;
+				registers.ip += 2;
+			}
+			break;
+        case CPU::JMP_BASE_OPCODE:
             registers.ip += data;
-        } else if (instruction == CPU::LOADA_BASE_OPCODE) {
-			
-		} else if(instruction == CPU::LOADA_BASE_OPCODE
-		else if (instruction == CPU::INT_BASE_OPCODE) {
+
+            break;
+        case CPU::INT_BASE_OPCODE:
             _pic.isr_3();
-        } else {
-            std::cerr << "CPU: invalid opcode data. Skipping..." << std::endl;
+
+            break;
+        default:
+            std::cerr << "CPU: invalid opcode data (" << instruction << "). Skipping..." << std::endl;
             registers.ip += 2;
+
+            break;
         }
     }
 }

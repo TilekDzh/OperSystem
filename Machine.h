@@ -1,7 +1,7 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
-#include "memory.h"
+#include "mmu.h"
 #include "pic.h"
 #include "pit.h"
 #include "cpu.h"
@@ -11,7 +11,7 @@ namespace vm
     class Machine
     {
     public:
-        Memory memory;
+        MMU mmu;
         PIC pic;
         PIT pit;
         CPU cpu;

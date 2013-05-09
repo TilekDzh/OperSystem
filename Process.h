@@ -2,7 +2,7 @@
 #define PROCESS_H
 
 #include "cpu.h"
-#include "memory.h"
+#include "mmu.h"
 
 namespace vm
 {
@@ -25,13 +25,15 @@ namespace vm
 
         process_priority_type priority;
 
-        Memory::ram_size_type memory_start_position;
-        Memory::ram_size_type memory_end_position;
+        MMU::ram_size_type memory_start_position;
+        MMU::ram_size_type memory_end_position;
 
-        Memory::ram_size_type sequential_instruction_count;
+        MMU::ram_size_type sequential_instruction_count;
 
-        Process(process_id_type id, Memory::ram_size_type memory_start_position,
-                                    Memory::ram_size_type memory_end_position);
+        MMU::page_table_type *page_table;
+
+        Process(process_id_type id, MMU::ram_size_type memory_start_position,
+                                    MMU::ram_size_type memory_end_position);
 
         virtual ~Process();
 

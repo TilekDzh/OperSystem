@@ -1,20 +1,18 @@
-#pragma once
+#ifndef CPU_H
+#define CPU_H
 
-#include "memory.h"
+#include "mmu.h"
 #include "pic.h"
 
 namespace vm
 {
     struct Registers
     {
-        int eax;
-        int ebx;
-        int ecx;
+        int a, b, c;
 
         int flags;
 
-        unsigned int ip;
-        unsigned int sp;
+        unsigned int ip, sp;
 
         Registers();
     };
@@ -23,30 +21,32 @@ namespace vm
     {
     public:
         static const int MOVA_BASE_OPCODE = 0x10;
-        static const int MOVB_BASE_OPCODE = 0x10 + 1;
-        static const int MOVC_BASE_OPCODE = 0x10 + 2;
-		
-		static const int LOADA_BASE_OPCODE = 0x30;
-		static const int LOADB_BASE_OPCODE = LOADA_BASE_OPCODE + 1;
-		static const int LOADC_BASE_OPCODE = LOADA_BASE_OPCODE + 2;
-		
-		static const int STOREA_BASE_OPCODE = 0x40;
-		static const int STOREB_BASE_OPCODE = STOREA_BASE_OPCODE + 1;
-		static const int STOREC_BASE_OPCODE = STOREA_BASE_OPCODE + 2;
+        static const int MOVB_BASE_OPCODE = MOVA_BASE_OPCODE + 1;
+        static const int MOVC_BASE_OPCODE = MOVA_BASE_OPCODE + 2;
 
-        static const int JMP_BASE_OPCODE = 0x20;
+		static const int LDA_BASE_OPCODE = 0x20;
+		static const int LDB_BASE_OPCODE = LDA_BASE_OPCODE + 1;
+		static const int LDC_BASE_OPCODE = LDA_BASE_OPCODE + 2;
 
-        static const int INT_BASE_OPCODE = 0x30;
+		static const int STA_BASE_OPCODE = 0x30;
+		static const int STB_BASE_OPCODE = STA_BASE_OPCODE + 1;
+		static const int STC_BASE_OPCODE = STA_BASE_OPCODE + 2;
+
+        static const int JMP_BASE_OPCODE = 0x40;
+
+        static const int INT_BASE_OPCODE = 0x50;
 
         Registers registers;
 
-        CPU(Memory &memory, PIC &pic);
+        CPU(MMU &mmu, PIC &pic);
         virtual ~CPU();
 
         void Step();
 
     private:
-        Memory &_memory;
+        MMU &_mmu;
         PIC &_pic;
     };
 }
+
+#endif

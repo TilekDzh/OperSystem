@@ -3,7 +3,7 @@
 namespace vm
 {
     Machine::Machine()
-        : memory(), pic(), pit(pic), cpu(memory, pic),
+        : mmu(), pic(), pit(pic), cpu(mmu, pic),
          _working(false) {}
 
     Machine::~Machine() {}

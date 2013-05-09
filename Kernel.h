@@ -23,34 +23,34 @@ namespace vm
 
         typedef std::deque<Process> process_list_type;
         typedef std::priority_queue<Process> process_priorities_type;
-		typedef std::vector<int> listOfPriorities;
 
         Machine machine;
 
         process_list_type processes;
         process_priorities_type priorities;
-		listOfPriorities listPrior;
 
         Scheduler scheduler;
-		void Switching();
-		void Unloading();
-		void FreephycialMemory(Memory::ram_size_type physical_memory_index);
-		Memory::ram_size_type AllocatePhysicalMemory(Memory::ram_size_type units);
 
-        Kernel(Scheduler scheduler, std::vector<std::string> executables_paths,std::vector<int> prior);
+		MMU::page_table_type *page_table;
+
+        Kernel(Scheduler scheduler, std::vector<std::string> executables_paths);
         virtual ~Kernel();
 
-        void CreateProcess(const std::string &name,int priority);
+		MMU::ram_size_type GetPhysicalAddress(MMU::vmem_size_type address);
+        void CreateProcess(const std::string &name);
+
+        MMU::ram_size_type AllocateMemory(MMU::ram_size_type units);
+        void FreeMemory(MMU::ram_size_type physical_memory_index);
 
     private:
-        static const unsigned int _MAX_CYCLES_BEFORE_PREEMPTION = 2;
+        static const unsigned int _MAX_CYCLES_BEFORE_PREEMPTION = 5;
 
         Process::process_id_type _last_issued_process_id;
-        Memory::ram_type::size_type _last_ram_position;
-		Memory::ram_size_type _free_pshysical_memory;
+		process_list_type::size_type _current_process_index;
 
         unsigned int _cycles_passed_after_preemption;
-        process_list_type::size_type _current_process_index;
+
+        MMU::ram_size_type _free_physical_memory_index;
     };
 }
 
